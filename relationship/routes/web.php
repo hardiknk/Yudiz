@@ -98,3 +98,5 @@ Route::get('get_comment',[PostController::class,'get_comment']);
 Route::get('get_comments',[PostController::class,'get_comments']);
 Route::get('get_post_data',[PostController::class,'get_post_data']);
 
+//many to many polymorphic reletionship 
+
