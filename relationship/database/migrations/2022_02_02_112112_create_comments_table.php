@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCarsTable extends Migration
+class CreateCommentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateCarsTable extends Migration
      */
     public function up()
     {
-        Schema::create('cars', function (Blueprint $table) {
+        Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            $table->string('car_model_name');
-            $table->unsignedBigInteger('mechenic_id');
-            $table->foreign('mechenic_id')->references('id')->on('mechenics');
+            $table->bigInteger('user_id');
+            $table->text('body');
+            $table->morphs('commentable');
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ class CreateCarsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cars');
+        Schema::dropIfExists('comments');
     }
 }
