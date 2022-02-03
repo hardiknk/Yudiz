@@ -18,8 +18,7 @@ class ShopController extends Controller
         // DB::enableQueryLog();
         $shop_data = Shop::with('getCountryName')->get();
         // dd(DB::getQueryLog());
-        return view('shop_list',["shop_data"=>$shop_data]);
-       
+        return view('shop_list', ["shop_data" => $shop_data]);
     }
 
     /**
