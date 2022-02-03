@@ -22,3 +22,6 @@ Route::get('/', function () {
 
 Route::get('getCountryWithCity',[CountryController::class,'getCountryWithCity']);
 Route::get('getShopNameWithCountry',[ShopController::class,'getShopNameWithCountry']);
+
+//mutators example
+Route::get('add_country',[CountryController::class,'add_country']);

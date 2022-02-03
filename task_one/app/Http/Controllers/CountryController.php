@@ -20,9 +20,11 @@ class CountryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function add_country()
     {
-        //
+        $country = new Country();
+        $country->con_name = "Canada";
+        $country->save();
     }
 
     /**

@@ -15,4 +15,17 @@ class Country extends Model
     {
         return $this->hasMany(City::class);
     }
+
+    //example of the accesor and first letter of capital in con_name column
+    public function getConNameAttribute($value)
+    {
+        return lcfirst($value);
+    }
+
+    //example of the mutor 
+    public function setConNameAttribute($value)
+    {
+        return $this->attributes['con_name'] = $value."test Add";
+    }
+
 }
