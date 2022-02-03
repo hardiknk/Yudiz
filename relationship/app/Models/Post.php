@@ -30,6 +30,6 @@ class Post extends Model
     //many to many polymorphic 
     public function tags()
     {
-        return $this->morphToMany(Tag::class, 'tagable');
+        return $this->morphToMany(Tag::class, 'taggables');
     }
 }

@@ -15,6 +15,7 @@ class CraeteTaggablesTable extends Migration
     {
         Schema::create('taggables', function (Blueprint $table) {
             $table->id();
+            $table->integer('tag_id');
             $table->morphs('taggables');
             $table->timestamps();
         });

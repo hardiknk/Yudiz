@@ -12,7 +12,7 @@ class Video extends Model
     protected $fillable = [
         'user_id',
         'title',
-       
+
     ];
 
     public function comments()
@@ -23,5 +23,11 @@ class Video extends Model
     public function comment()
     {
         return $this->morphOne(Comment::class, 'commentable');
+    }
+
+    //many to many polymorphic reletionship 
+    public function tags()
+    {
+        return $this->morphToMany(Tag::class, 'taggables');
     }
 }
