@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\CountryController;
+use App\Http\Controllers\ShopController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +18,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+Route::get('getCountryWithCity',[CountryController::class,'getCountryWithCity']);
+Route::get('getShopNameWithCountry',[ShopController::class,'getShopNameWithCountry']);
