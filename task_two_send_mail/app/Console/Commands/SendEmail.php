@@ -14,7 +14,8 @@ class SendEmail extends Command
      *
      * @var string
      */
-    protected $signature = 'user:notify {user_email?}';
+    protected $signature = 'user:notify {--email=}';
+    // protected $signature = 'user:notify {--user_email}';
 
     /**
      * The console command description.
@@ -49,11 +50,14 @@ class SendEmail extends Command
     }
     public function handle()
     {
-        $email =  $this->argument('user_email');
+        // $email =  $this->argument('email');
+        $email = $this->option('email');
+        // echo '<pre>'; print_r($email); exit;
 
         if (!empty($email)) {
             if ($this->confirm('Are You Sure Want To Send Email?')) {
                 $this->sendMail($email);
+                $this->info("Mail Is Sent");
             } else {
                 $this->info("Mail Is Discard");
             }
