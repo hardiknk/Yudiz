@@ -55,7 +55,7 @@ class SendEmail extends Command
         // echo '<pre>'; print_r($email); exit;
 
         if (!empty($email)) {
-            if ($this->confirm('Are You Sure Want To Send Email?')) {
+            if ($this->confirm('Are You Sure Want To Send Email?',true)) {
                 $this->sendMail($email);
                 $this->info("Mail Is Sent");
             } else {
