@@ -24,7 +24,7 @@ Route::get('news_latter',[SubscriptionController::class,'news_latter'])->name('n
 Route::post('subscribe',[SubscriptionController::class,'subscribe'])->name('subscribe');
 
 //unsubscribe news latter 
-Route::get('unsubscribe/{email?}',[SubscriptionController::class,'unsubscribe'])->name('unsubscribe')->middleware('signed');
+Route::get('unsubscribe/{email?}',[SubscriptionController::class,'unsubscribe'])->name('unsubscribe');
 
 //post controller route 
 Route::get('add_post',[PostController::class,'index'])->name('add_post');

@@ -31,6 +31,9 @@ class SubscriptionController extends Controller
     }
     public function unsubscribe(Request $request)
     {
+        if (!$request->hasValidSignature()) {
+            return redirect()->route('news_latter')->with('danger', 'Something Is Wrong Or You Have Not Permission for Change The Other User Subscription');
+        }
         // dd($request->input());
         $user_data = UserSubscribe::where('user_email', '=', $request->email)->first();
         if ($user_data) {
