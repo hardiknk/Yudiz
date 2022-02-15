@@ -172,11 +172,6 @@ class ValidationController extends Controller
             //===========end with end =================
 
 
-            //===========ends_with:foo,bar,...  start =================
-            // 'title' => 'ends_with:hardik,akshay' //jkladfhardik submit form but jkladfhardikkkk not submit 
-            //===========end with end =================
-
-
             //===========  enum  start :::pending  =================
             // 'post_status' => [new Enum(ServerStatus::class)],
             //==========   enum  end =================
@@ -319,6 +314,7 @@ class ValidationController extends Controller
 
             // //=========== nullable start  =============
             // 'title' => 'nullable', //The field under validation may be null.
+            // 'chk_terms_condition' => 'nullable', //The field under validation may be null.
             // // =========== nullable end =============
 
             // //=========== numeric start  =============
@@ -337,14 +333,111 @@ class ValidationController extends Controller
 
             // //=========== prohibited start =============
             // 'chk_terms_condition' => 'prohibited', //  must be empty or not present. prohibited means 
+            // 'title' => 'prohibited', //  must be empty or not present. prohibited means 
             // // =========== prohibited end =============
 
+            // //=========== prohibited_if:anotherfield,value,... start =============
+            // 'chk_terms_condition' => 'prohibited', //if value match then only submit the form
+            // 'title' => 'prohibited_if:chk_terms_condition,false',
+            // // =========== prohibited_if:anotherfield,value,... end =============
+
+            // //===========prohibited_unless:anotherfield,value,... start =============
+            // 'chk_terms_condition' => 'prohibited', //opposite of the prohibited_if 
+            // 'title' => 'prohibited_unless:chk_terms_condition,false',
+            // // ===========prohibited_unless:anotherfield,value,... end =============
+
+
+            // //===========prohibits:anotherfield start :::pending=============
+            // 'description' => '',
+            // 'chk_terms_condition' => '', //opposite of the prohibited_if 
+            // 'title' => 'prohibits:chk_terms_condition,description',
+            // // ===========prohibits:anotherfield end =============
+
+
+            // //====================regex satart ================ regular expression
+            // 'email' => 'regex:/^.+@.+$/i',
+            // //====================regex end  ================
+
+
+            // //====================required satart ================ 
+            // 'email' => 'required',
+            // //====================required end  ================
+
+
+            // //====================required_if satart ================ condition sachi to form submit no thay
+            // 'post_status' => 'boolean', //here select no => 0 
+            // 'email' => 'required_if:post_status,false', //The email field is required when post status is 0.
+            // //====================required_if end  ================
+
+            // //====================required_unless:anotherfield,value,... satart ================ condition sachi to j form submit thay
+            // 'post_status' => 'boolean', //here select no => 0 
+            // 'email' => 'required_unless:post_status,false', //if null value is comes so it is not submit the form also
+            // //====================required_unless:anotherfield,value,... end  ================
+
+            // //====================required_with:foo,bar,... satart ================ 
+            // 'email' => 'required_with:post_status,title,description', // email+ (koin pan ek =>post_status,title,description) so sumibt the form  //The email field is required when post status / title / description is present. //only email submit the form
+            // //====================required_with:foo,bar,... end  ================
+
+
+            // //====================required_with_all:foo,bar,... satart ================ 
+            // 'email' => 'required_with_all:title,post_status', // (bhada filed post_status,title,description is not empty so form is not submit othervise submit the form) 
+            // // if email only then submit if email+title then submit etc //if not enter anyting then not submit
+            // //====================required_with_all:foo,bar,... end  ================
+
+            // //====================required_without:foo,bar,... satart ================ 
+            // 'email' => 'required_without:title,post_status', // only email submit //only title then not submit 
+            // // eamil+title => submit , title + post_status submit //email + (any filed ) so submit
+            // //jyare kai pan select nathi karyu tyare The email field is required when title / post status is not present.
+            // //====================required_without:foo,bar,... end  ================
 
 
 
+            // //====================required_without_all:foo,bar,... satart ================ 
+            // 'email' => 'required_without_all:title,post_status,numbers', // ony tittle submit // only email submit 
+            //without any not submit //title+email submit //title+post_status submit 
+            // //====================required_without_all:foo,bar,... end  ================
+
+            // //====================same:field satart ================ 
+            // 'password' => 'required',
+            // 'password_confirmation' => 'same:password', //if password and password_conformation match then submit 
+            // //====================same:field end  ================
+
+
+            // //====================same:field satart ================ 
+            // Validate that a string is exactly 12 characters long...
+            // 'title' => 'size:12',
+            // Validate that a provided integer equals 10...
+            // 'numbers' => 'integer|size:10',
+            // //====================same:field end  ================
 
 
 
+            //===========start_with:foo,bar,...  start =================
+            // 'title' => 'start_with:hardik,akshay' //jkladfhardik submit form but jkladfhardikkkk not submit 
+            //===========end with end =================
+
+            //===========string  start =================
+            // 'title' => 'string' ////if not pass then display the The title must be a string.
+            //===========strintg end =================
+
+            ////===========timezone  start ::pending  =================
+            //// 'title' => 'timezone' ////if not pass then display the The title must be a timezone.
+            ////===========timezone end =================
+
+
+
+            //===========unique  start =================
+            // 'email' => 'unique:posts,email' //table,column_name if email found then not submit the form 
+            //===========unique end =================
+
+            //===========url  start =================
+            // 'url' => 'url' //The field under validation must be a valid URL.
+            //===========url end =================
+
+            //===========uuid  start =================
+            // 'title' => 'uuid' //The field under validation must be a valid uuid. like  123e4567-e89b-12d3-a456-426614174000
+            //===========uuid end ================
+            
 
         ]);
 
