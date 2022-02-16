@@ -1,0 +1,31 @@
+@component('mail::message')
+# Introduction
+
+The body of your message.
+{{-- <p>
+    {{ $user_data}}
+</p> --}}
+
+{{-- use of the panel markdown template  --}}
+@component('mail::panel')
+This is the panel content.
+Notify User Email Is : {{ $user_data->email}}
+@endcomponent
+
+{{-- use of the table in markdown mail template --}}
+@component('mail::table')
+| Laravel       | Table         | Example  |
+| ------------- |:-------------:| --------:|
+| Col 2 is      | Centered      | $10      |
+| Col 3 is      | Right-Aligned | $20      |
+@endcomponent
+
+@component('mail::button', ['url' => ''])
+Button Text
+@endcomponent
+
+
+
+Thanks,<br>
+{{ config('app.name') }}
+@endcomponent
