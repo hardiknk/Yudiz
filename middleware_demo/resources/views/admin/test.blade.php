@@ -1,0 +1,1 @@
+<h1> admin test route for the middleware</h1>
