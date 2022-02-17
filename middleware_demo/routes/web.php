@@ -32,7 +32,8 @@ Route::post('user_register', [UserRegisterController::class, 'saveUser'])->name(
 
 Route::middleware('isAdmin')->group(function () {
     Route::get('is_admin', [UserLoginController::class, 'adminUser'])->name('adminUser');
-    Route::view('admin_test', 'admin.test');
+    // Route::view('admin_test', 'admin.test');
+    Route::view('admin_test', 'admin.test')->withoutMiddleware('isAdmin');
 });
 
 Route::get('user', [UserLoginController::class, 'normal_user']);
