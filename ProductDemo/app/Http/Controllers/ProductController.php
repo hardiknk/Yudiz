@@ -2,13 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
+use App\Models\Color;
 use App\Models\Payments;
 use App\Models\Product;
+use App\Models\ProductVariant;
+use App\Models\Quantity;
+use App\Models\Size;
 use Exception;
 use Razorpay\Api\Api;
 use Illuminate\Support\Facades\Session;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -22,90 +29,42 @@ class ProductController extends Controller
         //
         $product_data = Product::paginate(12);
         // dd($product_data);
+        // $color_data = ProductVariant::select('color')->all();
+        // $size_data = ProductVariant::select('color')->all();
         return view('product.index', ['product_data' => $product_data]);
     }
-    public function buyProduct(Request $request)
+
+    //get a signle product deails 
+    public function productDetails(Request $request)
     {
         // dd($request->input());
-        $product_id = $request->product_id;
-        $quantity_enter = $request->quantity_enter;
+        // DB::enableQueryLog();
+        // $product_quantity =  Quantity::where("product_id", $request->product_id)->groupBy('color_id')->get();
+        $product_quantity =  Quantity::where("product_id", $request->product_id)->get();
+        if ($product_quantity->isEmpty()) {
+            return redirect()->back()->with("danger",'No Product Found');
+        }
+        else {
+            $product_data = Product::find($request->product_id);
+            $color_data = Color::all();
+            $size_data = Size::all();
+    
+            return view("product.details", ["color_data" => $color_data, 'size_data' => $size_data, 'product_data' => $product_data]);
+        }
+       
+    }
 
-        $product_data  = Product::find($product_id);
-        if ($product_data->items <   $quantity_enter) {
-            return "no_stock";
+    public function getProductPrice(Request $request)
+    {
+        // dd($request->input());
+        $is_product =  Quantity::where("product_id", $request->product_id)->where("color_id", $request->color_id)->where('size', $request->size)->first();
+        // dd($is_product);
+        if ($is_product) {
+            return $is_product;
         } else {
-            Session::put('product_id', $product_id);
-            Session::put('quantity_enter', $quantity_enter);
-            return "buy_now";
+            return "no_find";
         }
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Product $product)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Product $product)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Product $product)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Product $product)
-    {
-        //
-    }
-
     public function paymentView(Request $request)
     {
         // $product_id  = ;
@@ -119,8 +78,7 @@ class ProductController extends Controller
     public function buyProductF(Request $request)
     {
         // dd($request->input());
-        $product_id  = Session::get('product_id');
-        $quantity_enter  = Session::get('quantity_enter');
+
 
         $input = $request->all();
         $api = new Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
@@ -131,12 +89,25 @@ class ProductController extends Controller
             try {
                 $response = $api->payment->fetch($input['razorpay_payment_id'])->capture(array('amount' => $payment['amount']));
                 // dd($response);
-                $product_data =  Product::find(Session::get('product_id'));
-                $product_data->items = $product_data->items - Session::get('quantity_enter');
-                $product_data->save();
+                //after done the payment remvoe the items from the cart and and decrese the item in the product tble 
+                $cart_data = Cart::query();
+                $cart_data = $cart_data->where('user_id', '=', Auth::user()->id)->get();
+                // dd($cart_data);
+                foreach ($cart_data as $key => $cart_items) {
+                    $quantity_minus =   Quantity::where('product_id', $cart_items->product_id)->where('color_id', $cart_items->color)->where('size', $cart_items->size)->first();
+                    if ($quantity_minus) {
+                        # code...
+                        $quantity_minus->item_quantity = $quantity_minus->item_quantity - $cart_items->quantity;
+                        $quantity_minus->save();
+                    }
+                }
+                //code for remove the products from the cart 
+                $cart_data = Cart::where('user_id', '=', Auth::user()->id)->delete();
+
+
 
                 $payment_insert = new Payments();
-                // payment_id	payment_done	
+                ////// payment_id	payment_done	
                 $payment_insert->amount = ($response->amount) / 100;
                 $payment_insert->payment_id = $response->id;
                 $payment_insert->payment_done = "1";
@@ -148,7 +119,8 @@ class ProductController extends Controller
             }
         }
 
-        // Session::put('success', 'Payment successful');
-        return redirect()->route('all_prod')->with('success','Product Purchase Successfully');
+        Session::forget('product_id');
+        Session::forget('quantity_enter');
+        return redirect()->route('all_prod')->with('success', 'Product Purchase Successfully');
     }
 }

@@ -21,6 +21,11 @@
                         All Product
                     </x-nav-link>
                 </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <x-nav-link :href="route('view_cart')" :active="request()->routeIs('view_cart')">
+                        View Cart
+                    </x-nav-link>
+                </div>
                 {{-- <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     <x-nav-link :href="route('all_prod_stock')" :active="request()->routeIs('all_prod_stock')">
                         All Product Stock
@@ -58,7 +63,9 @@
                             </x-dropdown-link>
                         </form>
                     </x-slot>
+
                 </x-dropdown>
+
             </div>
 
             <!-- Hamburger -->
@@ -103,6 +110,7 @@
                     </x-responsive-nav-link>
                 </form>
             </div>
+
         </div>
     </div>
 </nav>

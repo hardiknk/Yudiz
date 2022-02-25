@@ -1,0 +1,35 @@
+
+.shopping-cart {
+  width: 70%;
+  height: auto;
+  margin: 80px auto;
+  background: #FFFFFF;
+  box-shadow: 1px 2px 3px 0px rgba(0,0,0,0.10);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  height: 60px;
+  border-bottom: 1px solid #E1E8EE;
+  padding: 20px 30px;
+  color: #5E6977;
+  font-size: 18px;
+  font-weight: 400;
+}
+
+
+.custom_btn_pay {
+  background-color: #574caf;
+  border: none;
+  color: white;
+  cursor:pointer;
+  padding: 9px 27px;
+  text-align: left;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 17px;
+  border-radius: 16px;
+  margin-bottom: 10px;
+}

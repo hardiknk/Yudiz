@@ -1,4 +1,5 @@
 <x-app-layout>
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <style>
         * {
             box-sizing: border-box;
@@ -75,75 +76,87 @@
             @foreach ($product_data as $item)
                 <div class="column">
                     <div class="card">
-                        <img src="{{ asset('images/tshirt.jpg') }}" style="width:100%; height:auto">
+                        <img src="{{ asset('images/' . $item->prod_img . '') }}" style="width:100%; height:auto">
                         <h1> Name : {{ $item->prod_name }}</h1>
-
-                        <p class="price"> Price : $ {{ $item->prod_price }} </p>
+                        {{-- <p class="price"> Price : $ {{ $item->prod_price }} </p>
                         <p class="color">Color : {{ $item->getVarient->color }} </p>
                         <p class="color"> Size : {{ $item->getVarient->size }} </p>
-                        <p class="color">Brand : {{ $item->getVarient->prod_brand }} </p>
-                        @if ($item->items != 0 && $item->items > 0)
-                            <p> <input class="prod_quantity" style="margin-bottom: 10px" type="number"
+                        <p class="color">Brand : {{ $item->getVarient->prod_brand }} </p> --}}
+
+                        {{-- @if ($item->items != 0 && $item->items > 0)
+                            <p> <input class="prod_quantity" style="margin-bottom: 10px" type="text"
                                     name="prod_quantity" placeholder="Enter Quantity">
                             </p>
                         @endif
                         @if ($item->items == 0 || $item->items == null || $item->items < 0)
                             <p><button style="color: red">Out Of Stock </button></p>
                         @else
-                            <p><button id="buy_now" data-id="{{ $item->id }}" class="buy_now">Buy Now
+                            <p><button id="add_to_cart" data-id="{{ $item->id }}" class="add_to_cart">Add To Cart
                                 </button>
                             </p>
-                        @endif
+                        @endif --}}
+                        <p><a class="custom_btn_pay"
+                                href="{{ route('product_details', ['product_id' => $item->id]) }} "
+                                data-id="{{ $item->id }}">Product Details
+                            </a>
+                        </p>
+
                     </div>
                 </div>
             @endforeach
-
         </div>
     </div>
     {!! $product_data->links() !!}
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/validate.js/0.13.1/validate.min.js"></script>
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="{{ asset('js/jquery-3.6.0.min.js') }}"></script>
+    <script src=" {{ asset('js/validate.min.js') }} "></script>
+    <script src=" {{ asset('js/sweetalert.min.js') }} "></script>
 
     <script>
-        // $(document).ready(function() {
+        // $(document).on("click", "#add_to_cart", function() {
+        //     let product_id = $(this).data("id");
+        //     // let quantity_enter = $(this).prev().hide();
+        //     let quantity_enter = $(this).parent().prev().children().val();
 
+        //     // let quantity_enter = $(this).parent().prev().children().css({
+        //     //     "color": "red",
+        //     //     "border": "2px solid red"
+        //     // });
+        //     // let value_of_input = quantity_enter.$("p input").val();
+
+        //     if (quantity_enter == "") {
+        //         swal("Error", "Please Enter The Quantity", "error");
+        //         return false;
+        //     }
+
+        //     if (quantity_enter.indexOf('.') !== -1) {
+        //         swal("Error", "Please Enter A Valid Number To Buy", "error");
+        //         $(this).parent().prev().children().val('');
+        //         return false;
+        //     }
+
+        //     $.ajax({
+        //         type: "post",
+        //         url: "{{ route('add_to_cart') }}",
+        //         data: {
+        //             _token: "{{ csrf_token() }}",
+        //             product_id: product_id,
+        //             quantity_enter: quantity_enter,
+        //         },
+        //         success: function(response) {
+        //             if (response == "no_stock") {
+        //                 swal("Error", "Quantity Limit Exceeded ", "error");
+        //             }
+        //             if (response == "no_add_cart") {
+        //                 swal("Error", "Maximum Cart Limit Excedded For This Product", "error");
+        //             }
+        //             if (response == "successfully_add_to_cart") {
+        //                 swal("Success", "Product Successfully Added To Cart", "success");
+        //                 // let url = "{{ route('paymentView') }}";
+        //                 // document.location.href = url;
+        //             }
+        //         }
+        //     });
         // });
-        $('div.alert').not('.alert-important').delay(3000).slideUp(300);
-
-        $(document).on("click", "#buy_now", function() {
-            let product_id = $(this).data("id");
-            // let quantity_enter = $(this).prev().hide();
-            let quantity_enter = $(this).parent().prev().children().val();
-            // let quantity_enter = $(this).parent().prev().children().css({
-            //     "color": "red",
-            //     "border": "2px solid red"
-            // });
-            // let value_of_input = quantity_enter.$("p input").val();
-
-            if (quantity_enter == "") {
-                swal("Error", "Please Enter The Quantity", "error");
-                return false;
-            }
-            $.ajax({
-                type: "post",
-                url: "{{ route('buy_product') }}",
-                data: {
-                    _token: "{{ csrf_token() }}",
-                    product_id: product_id,
-                    quantity_enter: quantity_enter,
-                },
-                success: function(response) {
-                    if (response == "no_stock") {
-                        swal("Error", "Quantity Limit Exceeded ", "error");
-                    }
-                    if (response == "buy_now") {
-                        let url = "{{ route('paymentView') }}";
-                        document.location.href = url;
-                    }
-                }
-            });
-        });
     </script>
 </x-app-layout>

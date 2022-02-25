@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\RazorpayController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,14 +27,34 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('all_prod', [ProductController::class, 'index'])->name('all_prod');
-    Route::post('buy_product', [ProductController::class, 'buyProduct'])->name('buy_product');
-    
+    //single products details 
+    Route::get('product_details', [ProductController::class, 'productDetails'])->name('product_details');
+
     //razorpay payment links 
     Route::post('buy_p', [ProductController::class, 'buyProductF'])->name('buy_p');
     Route::get('paymentView', [ProductController::class, 'paymentView'])->name('paymentView');
+
+    //add the items in cart 
+    Route::post('add_to_cart', [CartController::class, 'AddToCart'])->name('add_to_cart');
+    //view items in cart 
+    Route::get('view_cart', [CartController::class, 'viewCart'])->name('view_cart');
+
+    //remove from the cart
+    Route::get('remove_from_cart', [CartController::class, 'removeCart'])->name('remove_from_cart');
+    //add extra product from the cart 
+    // add_one_product
+    Route::get('add_one_product', [CartController::class, 'addOneMore'])->name('add_one_product');
+    Route::get('remove_one_product', [CartController::class, 'removeOneMore'])->name('remove_one_product');
+
+    Route::get('remove_from_cart', [CartController::class, 'removeCart'])->name('remove_from_cart');
+
+    //get the product price 
+    Route::get('get_price', [ProductController::class, 'getProductPrice'])->name('get_price');
+    
 });
 
-Route::get('razorpay', function () {
-    return view('razorpay.index');
-});
+//understand the razorpay payment gateway 
+Route::get('razorpay', [RazorpayController::class, 'index'])->name('razorpay');
+
+
 require __DIR__ . '/auth.php';
