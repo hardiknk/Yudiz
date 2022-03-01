@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
+use Illuminate\Queue\Middleware\RateLimited;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +27,13 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+
+        Route::resourceVerbs([
+            'create' => 'createlocal',
+
+        ]);
+
+
         $this->configureRateLimiting();
 
         $this->routes(function () {
@@ -47,8 +55,31 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function configureRateLimiting()
     {
-        RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        // echo "hii call the configure route "; exit;
+        // RateLimiter::for('api', function (Request $request) {
+        //     return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        // });
+
+
+        //custome rate limit for the route 
+        // RateLimiter::for('customer_route', function (Request $request) {
+        //     // echo "rate limit all";
+        //     // exit;
+        //     return Limit::perMinute(5);
+
+        //     //custome response redirect 
+        //     // return Limit::perMinute(5)->response(function () {
+        //     //     return response('Custom response when two time refresh the pages...', 429);
+        //     // });
+        // });
+
+
+        //for the vip customer route call
+        RateLimiter::for('customer_route', function (Request $request) {
+            
+
+            // return ($request->user()->vip_customer) ? Limit::none() : Limit::perMinute(3)->by($request->ip());
+            // return Limit::perMinute(5);
         });
     }
 }

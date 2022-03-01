@@ -24,6 +24,13 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+     //checking the authenticaiton or not using the constructure 
+     public function __construct()
+     {
+        $this->middleware('auth');
+     }
+
     public function index()
     {
         //
