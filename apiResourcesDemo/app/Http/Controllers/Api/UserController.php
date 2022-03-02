@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
+use App\Models\Phone;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -68,5 +69,31 @@ class UserController extends Controller
         return (new UserResource(User::find(1)))
             ->response()
             ->header('X-Value Name', 'Hardik Kanzriaya');
+    }
+
+
+    public function pivotInfo()
+    {
+        $user_data = User::with('getPhones')->find(2);
+        // $user_data = Phone::with('getUsers')->find(2);
+        // dd($user_data->getPhones);
+        // dd($user_data->getUsers);
+        // dd($user_data);
+
+        // foreach ($user_data->getPhones as $phone) {
+        //     echo $phone->pivot->phone_id;
+        //     // dd($phone->pivot->phone_id);
+        // }
+        // exit;
+
+        // dd($user_data);
+        // $data =  $user_data->whenPivotLoaded('phone_user', function () {
+        //     return $this->pivot->phone_id;
+        // });
+        // dd($data);
+
+        // dd($user_data);
+
+        return new UserResource($user_data);
     }
 }

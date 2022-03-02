@@ -37,3 +37,6 @@ Route::get('add_meta', [UserController::class, 'addMetaData'])->name('add_meta')
 //Resource Responses
 Route::get('add_response', [UserController::class, 'addResponse'])->name('add_response');
 
+
+//Conditional Pivot Information
+Route::get('pivot_info', [UserController::class, 'pivotInfo'])->name('pivot_info');

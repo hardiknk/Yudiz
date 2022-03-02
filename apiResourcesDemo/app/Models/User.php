@@ -42,8 +42,15 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function getPhone()
+    // public function getPhone()
+    // {
+    //     return $this->hasOne(Phone::class);
+    // }
+
+
+    //many to many reletionship
+    public function getPhones()
     {
-        return $this->hasOne(Phone::class);
+        return $this->belongsToMany(Phone::class, 'phone_user', 'phone_id', 'user_id')->as('getPhone')->withPivot(['user_id', 'phone_id']);
     }
 }

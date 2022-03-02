@@ -20,6 +20,7 @@ class UserCollection extends ResourceCollection
         // return parent::toArray($request);
         return [
             'data' => $this->collection,
+
             // 'name' => $this->name,
             // 'email' => $this->email,
             // 'created_at' => $this->created_at,

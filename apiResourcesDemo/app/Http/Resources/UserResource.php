@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\PhoneUser;
 use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -21,8 +22,11 @@ class UserResource extends JsonResource
 
     public function toArray($request)
     {
-        // return parent::toArray($ request);
-        // dd($request);
+        dd($this->whenPivotLoadedAs('getPhone', 'phone_user', function () {
+            return $this->getPhone->user_id;
+        }));
+        // return parent::toArray($request);
+        // dd($this);
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -46,8 +50,18 @@ class UserResource extends JsonResource
             // // getting the reletioship single has one 
             // 'phone_name' => $this->getPhone->phon_name,
 
-            'phone_name' =>  $this->whenLoaded('getPhone'),
+            // 'phone_name' =>  $this->whenLoaded('getPhones'),
 
+            //using the pivot many to many reletionship ::pending
+            // 'phone_id' =>  $this->whenPivotLoaded('phone_users', function () {
+            //     return $this->pivot->phone_id;
+            // }), //third argument by default load 
+
+
+
+            'phone_id' => $this->whenPivotLoaded('phone_user', function () {
+                return $this->pivot->phone_id;
+            }),
 
             'email' => $this->email,
             'created_at' => $this->created_at,
@@ -56,8 +70,8 @@ class UserResource extends JsonResource
     }
 
     //add the custome response in the  response class
-    public function withResponse($request, $response)
-    {
-        $response->header('X-Value surname', 'Kanzariy');
-    }
+    // public function withResponse($request, $response)
+    // {
+    //     $response->header('X-Value surname', 'Kanzariy');
+    // }
 }
