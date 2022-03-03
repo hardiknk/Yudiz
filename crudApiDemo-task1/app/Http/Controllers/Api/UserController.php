@@ -21,33 +21,6 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        // echo "hii index method call i"; exit;
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|exists:users,email|max:255',
-            'password' => 'required|max:255',
-        ], $messages = [
-            // 'required' => 'The :attribute field is required.',
-            'email.exists' => 'The Email Is Not In Our Database',
-        ]);
-
-        if ($validator->fails()) {
-            $responseArr['message'] = $validator->messages()->first();
-            return response()->json($responseArr, Response::HTTP_BAD_REQUEST);
-        }
-
-
-        $is_login =  Auth::guard('web')->attempt(['email' => $request->email, 'password' => $request->password]);
-
-        if ($is_login) {
-            return (new UserResource(Auth::user()))->additional(['meta' => [
-                'message' => "User Login Successfully",
-                'response_code' => Response::HTTP_OK,
-            ]]);
-        } else {
-            $responseArr['message'] = "Email Or Password Is Incorrect";
-            return response()->json($responseArr, Response::HTTP_BAD_REQUEST);
-        }
-        // $is_login = User::where([['email',$request->email],['password',Hash::check($request->password,)]])->first();
     }
 
     /**
@@ -80,8 +53,8 @@ class UserController extends Controller
 
 
         if ($validator->fails()) {
-            $responseArr['message'] = $validator->messages()->first();
-            return response()->json($responseArr, Response::HTTP_BAD_REQUEST);
+            $arr = array("status" =>  Response::HTTP_BAD_REQUEST, "message" => $validator->errors()->first());
+            return response()->json($arr);
         }
 
         $user_data = new User();
@@ -113,8 +86,8 @@ class UserController extends Controller
                 'response_code' => Response::HTTP_OK,
             ]]);
         } else {
-            $responseArr['message'] = "User Is Not Found";
-            return response()->json($responseArr, Response::HTTP_OK);
+            $arr = array("status" =>  Response::HTTP_BAD_REQUEST, "message" => "User Is Not Found", "data" => []);
+            return response()->json($arr);
         }
     }
 
@@ -146,8 +119,8 @@ class UserController extends Controller
 
 
         if ($validator->fails()) {
-            $responseArr['message'] = $validator->messages()->first();
-            return response()->json($responseArr, Response::HTTP_BAD_REQUEST);
+            $arr = array("status" =>  Response::HTTP_BAD_REQUEST, "message" => $validator->errors()->first());
+            return response()->json($arr);
         }
         // echo "update call"; exit;
         $user_data = User::find($id);
@@ -160,8 +133,8 @@ class UserController extends Controller
                     'response_code' => Response::HTTP_OK,
                 ]]);
             } else {
-                $responseArr['message'] = "SomeThing Is Wrong";
-                return response()->json($responseArr, Response::HTTP_OK);
+                $arr = array("status" =>  Response::HTTP_BAD_REQUEST, "message" => "SomeThing Is Wrong", "data" => []);
+                return response()->json($arr);
             }
         };
     }
@@ -174,21 +147,13 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        // echo "destory call".$id;
-        // exit;
-        //
-
         $is_user_found = User::find($id);
-        // dd($is_user_found);
-        // dd($is_user_found);
         if ($is_user_found) {
             $is_user_found->delete();
-            $responseArr['message'] = "User Delete Successfully";
-            return response()->json($responseArr, Response::HTTP_OK);
+            $arr = array("status" =>  Response::HTTP_OK, "message" => "User Delete Successfully", "data" => []);
         } else {
-
-            $responseArr['message'] = "Something Is Wrong";
-            return response()->json($responseArr, Response::HTTP_BAD_REQUEST);
+            $arr = array("status" =>  Response::HTTP_BAD_REQUEST, "message" => "Something Is Wrongs", "data" => []);
         }
+        return response()->json($arr);
     }
 }
