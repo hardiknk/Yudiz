@@ -30,12 +30,11 @@ class AuthController extends Controller
             'email' => 'required|exists:users,email|max:255',
             'password' => 'required|max:255',
         ],  [
-            'email.exists' => 'The Email Is Not In Our Database',
+            'email.exists' => 'The Email Is Not Exists',
         ]);
 
         if ($validator->fails()) {
-            $arr = array("status" =>  Response::HTTP_BAD_REQUEST, "message" => $validator->messages()->first(), "data" => []);
-            return response()->json($arr);
+            return $this->validationFailMsg($validator->errors()->first());
         }
 
         $credential = ['email' => $request->email, 'password' => $request->password];
@@ -43,52 +42,62 @@ class AuthController extends Controller
         if (Auth::attempt($credential)) {
             // dd(auth()->user());
             $token = Auth::user()->createToken('myToken')->plainTextToken;
-            return (new UserResource(Auth::user()))->additional(['meta' => [
-                'message' => "User Login Successfully",
-                'response_code' => Response::HTTP_OK,
-                'token' => $token,
-            ]]);
+            $auth_token = explode('|', $token)[1];
+
+            return (new UserResource(Auth::user()))->additional([
+                'meta' => [
+                    'status' => Response::HTTP_OK,
+                    'message' => "User Login Successfully",
+                    'token' => $auth_token,
+                ]
+            ]);
         } else {
-            $arr = array("status" =>  Response::HTTP_BAD_REQUEST, "message" => "Email Or Password Is Incorrect", "data" => []);
-            return response()->json($arr);
+            return $this->someThingWrong("Invalid Login Credential");
         }
     }
 
     //forgot password 
     public function forgotPassword(Request $request)
     {
-        $validator = Validator::make($request->all(), ['email' => "required|email",]);
-        if ($validator->fails()) {
-            $arr = array("status" => 400, "message" => $validator->errors()->first());
-        }
+        $validator = Validator::make($request->all(), ['email' => "required|email|max:255"]);
 
+        if ($validator->fails()) {
+            return $this->validationFailMsg($validator->errors()->first());
+        }
         try {
             $user = User::where('email', $request->email)->first();
             if (!empty($user)) {
                 $response = Password::broker()->sendResetLink(['email' => $request->email]);
                 // dd($response);
                 if (Password::RESET_LINK_SENT) {
-                    $arr = array("status" => 200, "message" => "Password Reset Link Sent");
+                    return $this->successMsg("Password Reset Link Sent");
                 } else {
-                    $arr = array("status" => 400, "message" => "Password Reset Link Not Sent");
+                    return $this->someThingWrong("Password Reset Link Not Sent");
                 }
             } else {
-                $arr = array("status" => 400, "message" => "User Not Found");
+                return $this->someThingWrong("This Email Is Not Found Our Records");
             }
         } catch (Exception $ex) {
-            $arr = array("status" => 400, "message" => $ex->getMessage());
+            return $this->someThingWrong($ex->getMessage());
         }
-        return response()->json($arr);
     }
 
     //reset password 
     public function resetPassword(Request $request)
     {
-        $request->validate([
-            'token' => 'required',
-            'email' => 'required|email',
-            'password' => 'required|min:8|confirmed',
-        ]);
+
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'token' => 'required',
+                'email' => 'required|email',
+                'password' => 'required|min:8|confirmed'
+            ]
+        );
+
+        if ($validator->fails()) {
+            return $this->validationFailMsg($validator->errors()->first());
+        }
 
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
@@ -102,13 +111,9 @@ class AuthController extends Controller
         );
 
         if ($status == Password::PASSWORD_RESET) {
-
-            return response(['message' => "Password Reset Succssfully", 200]);
+            return $this->successMsg("Password Reset successfully.");
         }
-
-        return response([
-            'message' => __($status)
-        ], 500);
+        return $this->successMsg(__($status));
     }
 
 
@@ -119,29 +124,28 @@ class AuthController extends Controller
         $userid = auth()->user()->id;
         // dd(Auth::user()->password);
         $validator = Validator::make($request->all(), [
-            'old_password' => 'required',
-            'new_password' => 'required|min:6',
+            'old_password' => 'required|max:150',
+            'new_password' => 'required|min:8|max:150',
             'confirm_password' => 'required|same:new_password',
         ]);
 
         if ($validator->fails()) {
-            $arr = array("status" => 400, "message" => $validator->errors()->first(), "data" => []);
+            return $this->validationFailMsg($validator->errors()->first());
         } else {
             try {
                 if ((Hash::check(request('old_password'), Auth::user()->password)) == false) {
-                    $arr = array("status" => 400, "message" => "Check your old password.", "data" => []);
+                    return $this->someThingWrong("Check your old password");
                 } else if ((Hash::check(request('new_password'), Auth::user()->password)) == true) {
-                    $arr = array("status" => 400, "message" => "Please Enter A Password Which Is Not Similar Then Current Password.", "data" => []);
+                    return $this->someThingWrong("Please Enter A Password Which Is Not Similar Then Current Password.");
                 } else {
                     User::where('id', $userid)->update(['password' => Hash::make(request('new_password'))]);
-                    $arr = array("status" => 200, "message" => "Password updated successfully.", "data" => []);
+                    return $this->successMsg("Password updated successfully.");
                 }
             } catch (\Exception $ex) {
                 $msg = $ex->getMessage();
-                $arr = array("status" => 400, "message" => $msg, "data" => []);
+                return $this->someThingWrong($msg);
             }
         }
-        return response()->json($arr);
     }
     //user logout 
     public function logout(Request $request)
@@ -149,11 +153,45 @@ class AuthController extends Controller
         // dd($request->user()->currentAccessToken());
         try {
             $request->user()->currentAccessToken()->delete();
-            return response([
-                'message' => 'Successfully Logout',
-            ]);
+            return $this->successMsg("Logout Successfully");
         } catch (\Exception $e) {
-            $this->storeErrorLog($e, 'Logout', 'Logout Fail');
+            return $this->someThingWrong($e->getMessage());
         }
+    }
+
+    public static function validationFailMsg($msg)
+    {
+        $arr = [
+            'data' => null,
+            'meta' => [
+                "status" =>  Response::HTTP_BAD_REQUEST,
+                "message" => $msg,
+            ],
+        ];
+        return response()->json($arr);
+    }
+
+    public static function someThingWrong($msg)
+    {
+        $arr = [
+            'data' => null,
+            'meta' => [
+                "status" =>  Response::HTTP_BAD_REQUEST,
+                "message" => $msg,
+            ],
+        ];
+        return response()->json($arr);
+    }
+
+    public static function successMsg($msg)
+    {
+        $arr = [
+            'data' => null,
+            'meta' => [
+                "status" =>  Response::HTTP_OK,
+                "message" => $msg,
+            ],
+        ];
+        return response()->json($arr);
     }
 }

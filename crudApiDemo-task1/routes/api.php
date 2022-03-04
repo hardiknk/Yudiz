@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\UserController;
+use App\Http\Controllers\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,17 +20,23 @@ use Illuminate\Support\Facades\Route;
 
 // Route::middleware(['api'])->group(function(){});
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::delete('delete_user/{id}', [UserController::class, 'destroy'])->name('delete_user');
-    Route::put('update_user/{id}', [UserController::class, 'update'])->name('update_user');
-    Route::get('get_user_info/{id}', [UserController::class, 'show'])->name('get_user_info');
-    Route::post('user_logout', [AuthController::class, 'logout'])->name('user_logout');
-    Route::post('change_password', [AuthController::class, 'changePassword'])->name('change_password');
+    Route::delete('deleteUser', [UserController::class, 'destroy'])->name('deleteUser');
+    Route::put('updateUser', [UserController::class, 'update'])->name('updateUser');
+    Route::get('getUserInformation', [UserController::class, 'show'])->name('getUserInformation');
+    Route::post('userLogout', [AuthController::class, 'logout'])->name('userLogout');
+    Route::post('changePassword', [AuthController::class, 'changePassword'])->name('changePassword');
+
+    //post releted route 
+    Route::post('createPost', [PostController::class, 'createPost'])->name('createPost');
+    Route::get('getAllPost', [PostController::class, 'getAllPost'])->name('getAllPost');
+    Route::patch('updatePost/{id}', [PostController::class, 'updatePost'])->name('updatePost');
+    Route::delete('deletePost/{id}', [PostController::class, 'deletePost'])->name('deletePost');
 });
 
-Route::get('user_login', [AuthController::class, 'userLogin'])->name('user_login');
-Route::post('create_user', [UserController::class, 'store'])->name('create_user');
-Route::post('forgot_password', [AuthController::class, 'forgotPassword'])->name('forgot_password');
-Route::post('reset_password', [AuthController::class, 'resetPassword'])->name('reset_password');
+Route::post('userLogin', [AuthController::class, 'userLogin'])->name('userLogin');
+Route::post('createUser', [UserController::class, 'store'])->name('createUser');
+Route::post('forgotPassword', [AuthController::class, 'forgotPassword'])->name('forgotPassword');
+Route::post('resetPassword', [AuthController::class, 'resetPassword'])->name('resetPassword');
 
 
 // Route::apiResource('users', UserController::class);
