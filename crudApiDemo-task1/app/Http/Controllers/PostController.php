@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CommentResource;
 use App\Http\Resources\PostResource;
+use App\Models\Comment;
 use App\Models\Post;
 use Exception;
 use Illuminate\Http\Request;
@@ -13,11 +15,13 @@ use Illuminate\Support\Facades\Validator;
 class PostController extends Controller
 {
     //
+   
+
 
     public function createPost(Request $request)
     {
         $validator =  Validator::make($request->all(), [
-            'title' => 'required|max:180',
+            'title' => 'required|max:180|unique:posts,title',
             'description' => 'required',
             'img' => 'required|image|max:2048',
         ], ['img.image' => "Please Upload The Image Proper Format"]);
@@ -31,7 +35,7 @@ class PostController extends Controller
             $img_name = time() . mt_rand(1, 5000) . '.' . $file->getClientOriginalExtension();
             $destinationPath = public_path() . '/postImage';
             $file->move($destinationPath, $img_name);
-            $img_full_path = public_path('postImage/' . $img_name);
+            // $img_full_path =  $img_name;
             // $img_full_path = asset('public/postImage/' . $img_name);
         }
 
@@ -39,7 +43,7 @@ class PostController extends Controller
             $post_data = new Post();
             $post_data->title = $request->title;
             $post_data->description = $request->description;
-            $post_data->img = $img_full_path ? $img_full_path : "null";
+            $post_data->img = $img_name ? $img_name : "null";
             $post_data->user_id = Auth::user()->id;
             $post_data->save();
 
@@ -57,7 +61,8 @@ class PostController extends Controller
     public function getAllPost()
     {
         try {
-            $post_data = Post::all();
+            $post_data = Post::withCount('getComment')->get();
+            // dd($post_data);
             return  PostResource::collection($post_data)->additional([
                 'meta' => [
                     'status' => Response::HTTP_OK,
@@ -73,8 +78,9 @@ class PostController extends Controller
     {
         // dd($request->input());
         $validator =  Validator::make($request->all(), [
-            'title' => 'required|max:150',
+            'title' => 'required|max:150|unique:posts,title,' . $id,
             'description' => 'required|max:500',
+
         ]);
         if ($validator->fails()) {
             return $this->someThingWrong($validator->errors()->first());
@@ -99,8 +105,8 @@ class PostController extends Controller
                 $img_name = time() . mt_rand(1, 5000) . '.' . $file->getClientOriginalExtension();
                 $destinationPath = public_path() . '/postImage';
                 $file->move($destinationPath, $img_name);
-                $img_full_path = public_path('postImage/' . $img_name);
-                $post_data->img = $img_full_path;
+                // $img_full_path = public_path('postImage/' . $img_name);
+                $post_data->img = $img_name;
             }
 
             $post_data->save();

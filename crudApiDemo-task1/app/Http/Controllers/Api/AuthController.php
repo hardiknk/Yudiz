@@ -68,8 +68,14 @@ class AuthController extends Controller
             $user = User::where('email', $request->email)->first();
             if (!empty($user)) {
                 $response = Password::broker()->sendResetLink(['email' => $request->email]);
-                // dd($response);
+                // dd($response); //passwords.sent  // passwords.throttled
+                // dd(Password::RESET_THROTTLED);
+                // if (Password::RESET_THROTTLED) {
+                //     echo "hey reset throttled call";  exit;
+                // }
+
                 if (Password::RESET_LINK_SENT) {
+                    // dd(Password::RESET_LINK_SENT);
                     return $this->successMsg("Password Reset Link Sent");
                 } else {
                     return $this->someThingWrong("Password Reset Link Not Sent");

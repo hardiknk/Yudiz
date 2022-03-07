@@ -48,7 +48,7 @@ class Handler extends ExceptionHandler
             $arr = [
                 'data' => null,
                 'meta' => [
-                    "status" =>  Response::HTTP_BAD_REQUEST,
+                    "status" =>  Response::HTTP_UNAUTHORIZED,
                     "message" => 'Unauthenticated Please Login ',
                 ],
             ];

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\UserController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,8 +21,8 @@ use Illuminate\Support\Facades\Route;
 
 // Route::middleware(['api'])->group(function(){});
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::delete('deleteUser', [UserController::class, 'destroy'])->name('deleteUser');
-    Route::put('updateUser', [UserController::class, 'update'])->name('updateUser');
+    Route::post('deleteUser', [UserController::class, 'destroy'])->name('deleteUser');
+    Route::post('updateUser', [UserController::class, 'update'])->name('updateUser');
     Route::get('getUserInformation', [UserController::class, 'show'])->name('getUserInformation');
     Route::post('userLogout', [AuthController::class, 'logout'])->name('userLogout');
     Route::post('changePassword', [AuthController::class, 'changePassword'])->name('changePassword');
@@ -29,8 +30,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //post releted route 
     Route::post('createPost', [PostController::class, 'createPost'])->name('createPost');
     Route::get('getAllPost', [PostController::class, 'getAllPost'])->name('getAllPost');
-    Route::patch('updatePost/{id}', [PostController::class, 'updatePost'])->name('updatePost');
-    Route::delete('deletePost/{id}', [PostController::class, 'deletePost'])->name('deletePost');
+    Route::post('updatePost/{id}', [PostController::class, 'updatePost'])->name('updatePost');
+    Route::post('deletePost/{id}', [PostController::class, 'deletePost'])->name('deletePost');
+
+    //comment releted routes
+    Route::get('getAllComments', [CommentController::class, 'getAllComments'])->name('getAllComments');
+    Route::post('createComment', [CommentController::class, 'createComment'])->name('createComment');
+    Route::post('deleteComment/{id}', [CommentController::class, 'deleteComment'])->name('deleteComment');
+    Route::post('updateComment/{id}', [CommentController::class, 'updateComment'])->name('updateComment');
 });
 
 Route::post('userLogin', [AuthController::class, 'userLogin'])->name('userLogin');

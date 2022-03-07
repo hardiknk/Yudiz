@@ -15,4 +15,8 @@ class Post extends Model
         'img',
 
     ];
+    public function getComment()
+    {
+        return $this->hasMany(Comment::class, 'post_id', 'id');
+    }
 }
