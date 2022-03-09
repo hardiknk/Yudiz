@@ -15,16 +15,18 @@ use Illuminate\Support\Facades\Validator;
 class PostController extends Controller
 {
     //
-   
-
 
     public function createPost(Request $request)
     {
-        $validator =  Validator::make($request->all(), [
-            'title' => 'required|max:180|unique:posts,title',
-            'description' => 'required',
-            'img' => 'required|image|max:2048',
-        ], ['img.image' => "Please Upload The Image Proper Format"]);
+        $validator =  Validator::make(
+            $request->all(),
+            [
+                'title' => 'required|max:180|unique:posts,title',
+                'description' => 'required',
+                // 'img' => 'required|image|max:2048',
+            ],
+            // ['img.image' => "Please Upload The Image Proper Format"]
+        );
 
         if ($validator->fails()) {
             return $this->validationFailMsg($validator->errors()->first());
@@ -43,7 +45,8 @@ class PostController extends Controller
             $post_data = new Post();
             $post_data->title = $request->title;
             $post_data->description = $request->description;
-            $post_data->img = $img_name ? $img_name : "null";
+            // $post_data->img = $img_name ? $img_name : "null";
+            $post_data->img = "null";
             $post_data->user_id = Auth::user()->id;
             $post_data->save();
 
@@ -61,7 +64,8 @@ class PostController extends Controller
     public function getAllPost()
     {
         try {
-            $post_data = Post::withCount('getComment')->get();
+            $post_data = Post::withCount('getComment')->orderBy('id','DESC')->paginate(10);
+            // $post_data = Post::withCount('getComment')->latest()->paginate(10);
             // dd($post_data);
             return  PostResource::collection($post_data)->additional([
                 'meta' => [

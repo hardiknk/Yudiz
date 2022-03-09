@@ -18,12 +18,16 @@ class PostResource extends JsonResource
 
 
         return [
+            // 'post_id' => $this->id,
+            'post_id' => $this->id,
+            'user_id' => $this->user_id,
             'title' => $this->title,
             'description' => $this->description,
             'total_comment' => $this->when(isset($this->get_comment_count), $this->get_comment_count),
-            'post_id' => $this->id,
-            'user_id' => $this->user_id,
-            'img' => env('APP_URL') . '/postImage/' . $this->img,
+            'img' => $this->when($this->img != "null",  env('APP_URL') . '/postImage/' . $this->img),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+
         ];
     }
 }

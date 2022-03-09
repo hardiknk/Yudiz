@@ -13,6 +13,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use PhpParser\Node\Stmt\TryCatch;
 
 class UserController extends Controller
 {
@@ -178,6 +179,39 @@ class UserController extends Controller
             ],
         ];
         return response()->json($arr);
+    }
+
+    public function registerUserByOne(Request $request)
+    {
+        // $validator = Validator::make($request->all(), [
+        //     'name' => 'required|max:255',
+        //     'email' => 'required|unique:users|max:255|email|email:rfc,dns',
+        //     'password' => 'required|max:255|min:8',
+        // ]);
+
+
+        // if ($validator->fails()) {
+        //     return $this->validationFailMsg($validator);
+        // }
+
+        // dd($request->ips());
+        try {
+            $user_data = new User();
+            $user_data->name = $request->name;
+            $user_data->email = $request->email;
+            $user_data->password = Hash::make($request->password);
+            if ($user_data->save()) {
+
+                return (new UserResource($user_data))->additional([
+                    'meta' => [
+                        'status' => Response::HTTP_OK,
+                        'message' => "User Created Successfully",
+                    ]
+                ]);
+            };
+        } catch (Exception $e) {
+            return $this->someThingWrong($e->getMessage());
+        }
     }
 
     public static function someThingWrong($msg)

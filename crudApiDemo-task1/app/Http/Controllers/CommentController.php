@@ -14,12 +14,11 @@ use Illuminate\Support\Facades\Validator;
 
 class CommentController extends Controller
 {
-    //
-
-    public function getAllComments()
+    //get the comment by the post id 
+    public function getAllComments(Request $request, $id)
     {
         try {
-            $comment_data = Comment::all();
+            $comment_data = Comment::where('post_id', $id)->latest()->paginate(10);
             if ($comment_data->isEmpty()) {
                 return $this->someThingWrong("No Comments Are Found");
             }
