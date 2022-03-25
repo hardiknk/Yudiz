@@ -99,6 +99,7 @@ Route::get('getUserPhone', [UserController::class, 'getUserPhone']);
 //many to many relationship 
 // start the add singer intermideate table 
 Route::get('add_singer', [SingerController::class, 'add_singer']);
+
 //display the singer name according to song
 Route::get('show_song_by_singer', [SongController::class, 'show_song']);
 //display the song name according to singer name

@@ -17,6 +17,7 @@ class SongController extends Controller
         // dd(Singer::find(9)->songs);
         // dd(Singer::find(11)->songs);
         // eager loding relationshiop with songs 
+        
         dd(Singer::with('songs')->get());
     }
 }

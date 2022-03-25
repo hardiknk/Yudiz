@@ -12,7 +12,7 @@ class Mechenic extends Model
     public function carOwner()
     {
         //mechenic => car => owner 
-        // (information_find_model,intermidiate_model, 'car_fk', 'owner_fk', 'mech_pk','car_pk' )
+        // (information_find_model,intermidiate_model, 'car_fk', 'owner_fk', 'mech_pk','inter_pk' )
         return $this->hasOneThrough(Owner::class, Car::class);
     }
 
