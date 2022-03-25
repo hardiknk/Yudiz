@@ -17,10 +17,12 @@ class CompanyController extends Controller
     {
         // Company::with('getUserName')->get()->dd();
         // return Company::find(2)->getUserName; 
-        dd(Company::find(2)->getUserName); 
-        
+        dd(Company::find(2)->getUserName);
+        // $c_data = Company::with('getUserName')->get();
+        // echo '<pre>';
+        // print_r($c_data);
     }
-    
+
 
     /**
      * Show the form for creating a new resource.

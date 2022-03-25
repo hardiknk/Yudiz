@@ -90,12 +90,11 @@ Route::get('/', function () {
 //one to one relationshiop demo 
 Route::get('getUserDetails', [UserController::class, 'getUserDetails']);
 
+//belong to relationship => inverse of the one to one reletionship
+Route::get('getCompanyUser', [CompanyController::class, 'index']);
 
 //one to many relationshiop demo 
 Route::get('getUserPhone', [UserController::class, 'getUserPhone']);
-
-//belong to relationship
-Route::get('getCompanyUser', [CompanyController::class, 'index']);
 
 //many to many relationship 
 // start the add singer intermideate table 
@@ -107,6 +106,10 @@ Route::get('show_singer_by_song', [SingerController::class, 'show_singer']);
 //many to many relationship end
 
 //start the has one through relationship 
+//first mechenic => cars => owners 
+//here owners is  not direct releted to mechecnic table 
+//here cars table is one mechenic_id and owners table has car_id 
+
 Route::get('show_owner_by_mechenic', [OwnerController::class, 'show_owner']);
 //end the has-one-through relationship
 

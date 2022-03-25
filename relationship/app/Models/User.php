@@ -43,17 +43,25 @@ class User extends Authenticatable
     ];
 
     //one to one relationship 
-
+    //here one user is only connect with one company 
     function getUserCompanyName()
     {
-        return $this->hasOne(Company::class,'user_id','id');       
+        //anothertable, foreignkey, primary key 
+        // return $this->hasOne(Company::class, 'user_id', 'id')->latestOfMany();
+        return $this->hasOne(Company::class, 'user_id', 'id'); 
+        // //jo aapde ->latestOfMany() function user karyu hoy to many records ma jene last id hoy teva records aave 
+        // // and  oldestOfMany() function oldest records aave 
+
+        //ofMany function ofMany('price', 'max') jeni price maximum hoy teva records 
+        // return $this->hasOne(Company::class, 'user_id', 'id')->withDefault([
+        //     'name' => 'Guest Author',
+        // ]);
     }
 
     //one to many relationshiop 
     //here one user is many phones so create this funciton 
     function getAllUserPhone()
     {
-        return $this->hasMany(Phone::class,"user_id",'id');
+        return $this->hasMany(Phone::class, "user_id", 'id');
     }
-
 }

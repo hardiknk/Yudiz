@@ -13,8 +13,12 @@ class Company extends Model
         'company_name',
     ];
 
+
+    // get the user name from the comopany table 
     function getUserName()
     {
-        return $this->belongsTo(User::class,'user_id','id');
+        // another model, fk, primary key
+        return $this->belongsTo(User::class, 'user_id', 'id');
+        // return $this->belongsTo(User::class,'id','user_id'); //column not found error 
     }
 }
