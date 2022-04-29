@@ -1,0 +1,7 @@
+facebook insta icon left side ,
+ckeditor 4  for articale 
+
+
+news => 
+category => category,   
+news(post)=> category id , newes date, news title, news description(ckeditor)
