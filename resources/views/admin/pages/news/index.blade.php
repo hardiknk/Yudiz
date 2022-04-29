@@ -28,7 +28,7 @@
                         </a>
                     @endif
                     @if (in_array('add', $permissions))
-                        <a href="{{ route('admin.category.create') }}"
+                        <a href="{{ route('admin.news.create') }}"
                             class="btn btn-sm btn-primary font-weight-bolder text-uppercase">
                             <i class="fas fa-plus"></i>
                             Add {{ $custom_title }}
@@ -57,7 +57,7 @@
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: "{{ route('admin.category.listing') }}",
+                    url: "{{ route('admin.news.listing') }}",
                     data: {
                         columnsDef: ['checkbox', 'cat_name', 'active',
                             'action'
@@ -68,7 +68,13 @@
                         data: 'checkbox'
                     },
                     {
-                        data: 'cat_name'
+                        data: 'title'
+                    },
+                    {
+                        data: 'cat_id'
+                    },
+                    {
+                        data: 'created_by'
                     },
 
                     {
@@ -91,9 +97,19 @@
                         title: 'Category Name',
                         orderable: true
                     },
-
                     {
                         targets: 2,
+                        title: 'Title',
+                        orderable: true
+                    },
+                    {
+                        targets: 3,
+                        title: 'Created By',
+                        orderable: true
+                    },
+
+                    {
+                        targets: 4,
                         title: 'Active',
                         orderable: false
                     },

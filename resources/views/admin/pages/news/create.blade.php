@@ -3,9 +3,7 @@
 @push('breadcrumb')
     {!! Breadcrumbs::render('users_create') !!}
 @endpush
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-
+<link href="{{asset('css/select2.min.css')}}" rel="stylesheet" />
 @section('content')
     <div class="container">
         <div class="card card-custom">

@@ -9,6 +9,7 @@ use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class NewsController extends Controller
@@ -78,7 +79,7 @@ class NewsController extends Controller
             //for the banner image 
             $path = NULL;
             if ($request->has('banner_img')) {
-                $path = $request->file('banner_img')->store('news/profile_photo');
+                $path = $request->file('banner_img')->store('news/banner');
             }
             $news_data = new News();
             $news_data->title = $request->title;
@@ -122,12 +123,11 @@ class NewsController extends Controller
      */
     public function edit($id)
     {
-        //
         try {
-
-            $News_data = News::find($id);
-            // dd($News_data);
-            return view('admin.pages.news.edit', compact('News_data'))->with(['custom_title' => 'News']);
+            $news_detail = News::find($id);
+            $category_data = Category::all();
+            // dd($category_data);
+            return view('admin.pages.news.edit', ['news_detail' => $news_detail, 'category_data' => $category_data])->with(['custom_title' => 'News']);
         } catch (Exception $e) {
             flash("someting is wrong", $e->getMessage())->error();
             return redirect()->back();
@@ -143,19 +143,20 @@ class NewsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // dd($id);
+        // dd($request->input());
+        // dd("update call");
         try {
             DB::beginTransaction();
 
-            $News_data = News::find($id);
+            $news_data = News::find($id);
             if (!empty($request->action) && $request->action == 'change_status') {
                 // echo "status call"; exit;
                 $content = ['status' => 204, 'message' => "Something Went Wrong"];
-                if ($News_data) {
+                if ($news_data) {
                     // dd("hii inside the customer");
                     // dd($request->value);
-                    $News_data->is_active = $request->value;
-                    if ($News_data->save()) {
+                    $news_data->is_active = $request->value;
+                    if ($news_data->save()) {
                         // dd("update the customer data");
                         DB::commit();
                         $content['status'] = 200;
@@ -164,17 +165,45 @@ class NewsController extends Controller
                 }
                 return response()->json($content);
             } else {
-                $News_data->cat_name = $request->cat_name;
-                if ($News_data->save()) {
+                $rules = [
+                    'title' => 'required|max:150|unique:news,title,' . $news_data->id,
+                    'created_by' => 'nullable',
+                    'description' => 'required|min:100',
+                ];
+
+                $validate = Validator::make($request->all(), $rules);
+                if ($validate->fails()) {
+                    flash($validate->errors()->first())->error();
+                    return redirect()->back();
+                }
+
+                //for the banner image 
+                if ($request->has('remove_profie_photo')) {
+                    if ($news_data->banner_img) {
+                        Storage::delete($news_data->banner_img);
+                    }
+                    $path = null;
+                }
+
+                $path = NULL;
+                if ($request->has('banner_img')) {
+                    $path = $request->file('banner_img')->store('news/banner');
+                    Storage::delete($news_data->banner_img);
+                }
+                $news_data->title = $request->title;
+                $news_data->cat_id = $request->cat_id;
+                $news_data->created_by = $request->created_by;
+                $news_data->banner_img = $path == NULL ? $news_data->banner_img : $path;
+                $news_data->description = $request->description;
+                $news_data->is_popular = $request->is_popular;
+                if ($news_data->save()) {
+                    // dd("news update");
                     DB::commit();
                     flash('News Details Updated Successfully!')->success();
+                    return redirect()->route('admin.news.index');
                 } else {
-
                     flash('Unable to update user. Try again later')->error();
                 }
-                // dd("hii hardik after retr");
-                // exit;
-
                 return redirect(route('admin.news.index'));
             }
         } catch (QueryException $e) {
@@ -222,39 +251,43 @@ class NewsController extends Controller
     {
         extract($this->DTFilters($request->all()));
         $records = [];
-        $categories = News::orderBy($sort_column, $sort_order);
+        $news = News::orderBy($sort_column, $sort_order);
 
         if ($search != '') {
-            $categories->where(function ($query) use ($search) {
-                $query->where('cat_name', 'like', "%{$search}%");
+            $news->where(function ($query) use ($search) {
+                $query->where('title', 'like', "%{$search}%")
+                    ->orWhere('created_by', 'like', "%{$search}%");
             });
         }
 
-        $count = $categories->count();
+        $count = $news->count();
 
         $records['recordsTotal'] = $count;
         $records['recordsFiltered'] = $count;
         $records['data'] = [];
 
-        $categories = $categories->offset($offset)->limit($limit)->orderBy($sort_column, $sort_order);
+        $news = $news->offset($offset)->limit($limit)->orderBy($sort_column, $sort_order);
 
-        $categories = $categories->get();
-        // dd($users);
-        foreach ($categories as $News) {
+        $news = $news->with('category')->get();
+        // dd($news);
+        foreach ($news as $news_detail) {
+            // dd($news_detail->category);
             $params = [
-                'checked' => ($News->is_active == 'y' ? 'checked' : ''),
-                'getaction' => $News->is_active,
+                'checked' => ($news_detail->is_active == 'y' ? 'checked' : ''),
+                'getaction' => $news_detail->is_active,
                 'class' => '',
-                'id' => $News->id,
+                'id' => $news_detail->id,
             ];
             // echo "hii hhhhh"; exit;
 
             $records['data'][] = [
-                'id' => $News->id,
-                'cat_name' => $News->cat_name,
+                'id' => $news_detail->id,
+                'title' => $news_detail->title,
+                'cat_id' => $news_detail->category->cat_name,
+                'created_by' => $news_detail->created_by,
                 'active' => view('admin.layouts.includes.switch', compact('params'))->render(),
-                'action' => view('admin.layouts.includes.actions')->with(['custom_title' => 'News', 'id' => $News->id], $News)->render(),
-                'checkbox' => view('admin.layouts.includes.checkbox')->with('id', $News->id)->render(),
+                'action' => view('admin.layouts.includes.actions')->with(['custom_title' => 'News', 'id' => $news_detail->id], $news_detail)->render(),
+                'checkbox' => view('admin.layouts.includes.checkbox')->with('id', $news_detail->id)->render(),
             ];
         }
         // dd($records);

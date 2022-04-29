@@ -141,7 +141,8 @@ class CategoryController extends Controller
             }
         } catch (QueryException $e) {
             DB::rollback();
-            return redirect()->back()->flash('error', $e->getMessage());
+            flash('error', $e->getMessage());
+            return redirect()->back();
         } catch (Exception $e) {
             // dd("exception call");
             // dd($e->getMessage());
