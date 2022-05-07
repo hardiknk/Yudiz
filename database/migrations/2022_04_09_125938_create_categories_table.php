@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->string('cat_name');
+            $table->enum('is_home_cat', ['y', 'n'])->default('n')->after('cat_name');
             $table->longText('cat_description')->nullable();
             $table->string('cat_img')->nullable();
             $table->enum('is_active', ['y', 'n'])->default('y');

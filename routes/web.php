@@ -20,9 +20,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [HomeController::class, 'index']);
-// Route::get('news-details', [AdminNewsController::class, 'newsDetails']);
-Route::get('news', [NewsController::class, 'news']);
+Route::get('/', [HomeController::class, 'index'])->name('index');
+
+Route::get('news-details', [NewsController::class, 'newsDetails'])->name('news_details');
+Route::get('news', [NewsController::class, 'news'])->name('all_news_by_category');
 Route::get('contact-us', [InformativeController::class, 'contactUs'])->name('contact_us');
 Route::get('privacy-policy', [InformativeController::class, 'privacyPolicy'])->name('privacy_policy');
 Route::get('cookie-policy', [InformativeController::class, 'cookiePolicy'])->name('cookie_policy');

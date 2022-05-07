@@ -17,14 +17,27 @@ class NewsController extends Controller
     //
     public function newsDetails(Request $request)
     {
+        // dd($request->input());
+        if ($request->news_id) {
+            $news_data = News::find($request->news_id);
+        } else {
 
-        return view('front.news-details');
+            $news_data = News::find(1);
+        }
+        return view('front.news-details', ['news_data' => $news_data]);
     }
 
     public function news(Request $request)
     {
 
-        return view('front.news');
+        //here get the all news by category
+        // dd($request->input());
+        $news_details = News::where('cat_id', $request->cat_id)->get();
+        $cat_details = Category::find($request->cat_id);
+        // $news_details = News::where('cat_id', $request->cat_id)->get();
+        // $cat_details = Category::find($request->cat_id);
+
+        return view('front.news', ['news_details' => $news_details, 'cat_details' => $cat_details]);
     }
 
     //admin panel route start
@@ -47,8 +60,8 @@ class NewsController extends Controller
     {
         //
         // dd("hi news call");
-        $category_data = Category::all();
-        return view('admin.pages.news.create', ['category_data' => $category_data])->with(['custom_title' => 'News']);
+        // $category_data = Category::all();
+        return view('admin.pages.news.create')->with(['custom_title' => 'News']);
     }
 
     /**

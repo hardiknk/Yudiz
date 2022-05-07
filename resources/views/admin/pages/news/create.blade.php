@@ -25,7 +25,7 @@
                     <div class="form-group">
                         <label for="cat_id">{!! $mend_sign !!} Select Category :</label>
                         <select name="cat_id" id="cat_id" class="form-control select2-dropdown">
-                            @foreach ($category_data as $category)
+                            @foreach ($all_category as $category)
                                 <option value="{{ $category->id }}"> {{ $category->cat_name }} </option>
                             @endforeach
                         </select>

@@ -37,6 +37,21 @@
                             </span>
                         @endif
                     </div>
+
+                    {{-- this is the home category display --}}
+                    <div class="form-group">
+                        <label for="is_home_cat">{!! $mend_sign !!} Display Home Category:</label>
+                        <input type="radio" name="is_home_cat" {{ $category_data->is_home_cat == 'y' ? 'checked' : '' }}
+                            value="y"> Yes
+                        <input type="radio" name="is_home_cat" {{ $category_data->is_home_cat == 'n' ? 'checked' : '' }}
+                            value="n"> No
+                        @if ($errors->has('is_home_cat'))
+                            <span class="help-block">
+                                <strong class="form-text">{{ $errors->first('is_home_cat') }}</strong>
+                            </span>
+                        @endif
+                    </div>
+
                 </div>
                 <div class="card-footer">
                     <button type="submit" class="btn btn-primary mr-2">Update {{ $custom_title }}</button>

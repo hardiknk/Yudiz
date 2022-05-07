@@ -34,6 +34,18 @@
                         @endif
                     </div>
 
+                    {{-- this is for the home news category --}}
+                    <div class="form-group">
+                        <label for="is_home_cat">{!! $mend_sign !!} Display Home Category:</label>
+                        <input type="radio" name="is_home_cat" id="" value="y"> Yes
+                        <input type="radio" name="is_home_cat" id="" value="n" checked> No
+                        @if ($errors->has('is_home_cat'))
+                            <span class="help-block">
+                                <strong class="form-text">{{ $errors->first('is_home_cat') }}</strong>
+                            </span>
+                        @endif
+                    </div>
+
 
 
                 </div>

@@ -10,4 +10,9 @@ class Category extends Model
     use HasFactory;
     protected $table = 'categories';
     protected $fillable = ['cat_name'];
+
+    public function news()
+    {
+        return $this->hasMany(News::class, 'cat_id', 'id')->latest();
+    }
 }

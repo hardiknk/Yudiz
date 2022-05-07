@@ -24,6 +24,8 @@ return new class extends Migration
             $table->string("created_by")->nullable();
             $table->longText("description");
             $table->enum('is_active', ['y', 'n'])->default('y');
+            $table->enum('is_breaking', ['y', 'n'])->default('n');
+            $table->enum('is_main_news', ['y', 'n'])->default('n');
             $table->enum('is_popular', ['y', 'n'])->default('n');
             $table->timestamps();
         });

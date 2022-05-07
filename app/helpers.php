@@ -1,6 +1,9 @@
 <?php
 
 // Permission for admin panel
+
+use App\Models\Category;
+
 function getPermissions($user_type = 'normal')
 {
     $permissions = array();
@@ -125,4 +128,9 @@ function get_guard()
     } else {
         return "Guard not match";
     }
+}
+
+function getCategory()
+{
+    return Category::all();
 }

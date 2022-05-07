@@ -127,6 +127,7 @@ class CategoryController extends Controller
                 return response()->json($content);
             } else {
                 $category_data->cat_name = $request->cat_name;
+                $category_data->is_home_cat = $request->is_home_cat;
                 if ($category_data->save()) {
                     DB::commit();
                     flash('Category Details Updated Successfully!')->success();
